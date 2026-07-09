@@ -80,6 +80,7 @@ int main() {
 
     total = harga * jumlah;
 
+    // Proses Diskon
     if (total > 105000) {
         diskon = (total * 30) / 100;
         total = total - diskon;
