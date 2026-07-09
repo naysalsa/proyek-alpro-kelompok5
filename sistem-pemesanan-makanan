@@ -1,118 +1,272 @@
 #include <iostream>
+#include <string>
+#include <cctype>
 using namespace std;
 
-class Kasir {
+class Pemesanan {
 private:
-    string nama, menu;
-    int pilihan, harga, jumlah, total, bayar, kembalian, diskon = 0;
+    string nama; 
+    int total, bayar, kembalian, diskon;
+
+    static const int jumlahMenu = 13;
+
+    string daftarMenu[jumlahMenu] = {
+        "Ayam Geprek Original",
+        "Ayam Geprek Keju",
+        "Ayam Geprek Mozzarella",
+        "Ayam Geprek Sambal Matah",
+        "Mie Dog-dog",
+        "Nasi Goreng",
+        "Magelangan",
+        "Nasi Omlet",
+        "Es Teh",
+        "Es Jeruk",
+        "Kopi",
+        "Air Es",
+        "Air Mineral"
+    };
+
+    int daftarHarga[jumlahMenu] = {
+        15000,
+        18000,
+        22000,
+        17000,
+        15000,
+        13000,
+        11000,
+        10000,
+        5000,
+        5000,
+        5000,
+        3000,
+        3000
+    };
+
+    string menuPesanan[50];
+    int hargaPesanan[50];
+    int jumlahPesanan[50];
+    int banyakPesanan = 0;
 
 public:
-    void inputNama() {
-        cout << "Masukkan nama pelanggan: ";
+
+    string toLowerCase(string teks) {
+        for(int i = 0; i < teks.length(); i++) {
+            teks[i] = tolower(teks[i]);
+        }
+        return teks;
+    }
+
+    void tampilMenuUrut() {
+
+        string menuTemp[jumlahMenu];
+        int hargaTemp[jumlahMenu];
+
+        for(int i = 0; i < jumlahMenu; i++) {
+            menuTemp[i] = daftarMenu[i];
+            hargaTemp[i] = daftarHarga[i];
+        }
+
+        for(int i = 0; i < jumlahMenu - 1; i++) {
+            for(int j = i + 1; j < jumlahMenu; j++) {
+
+                if(hargaTemp[i] > hargaTemp[j]) {
+
+                    swap(hargaTemp[i], hargaTemp[j]);
+                    swap(menuTemp[i], menuTemp[j]);
+                }
+            }
+        }
+
+        cout << "\n===== MENU TERMURAH - TERMAHAL =====\n\n";
+
+        for(int i = 0; i < jumlahMenu; i++) {
+            cout << i + 1 << ". "
+                 << menuTemp[i]
+                 << " - Rp "
+                 << hargaTemp[i]
+                 << endl;
+        }
+
+        cout << endl;
+    }
+
+    void pesanMenu() {
+
+        cin.ignore();
+
+        cout << "\nMasukkan Nama Pelanggan : ";
         getline(cin, nama);
-    }
-    
-    void tampilMenu() {
-        cout << "\n========= Daftar Menu ===========" << endl;
-        cout << " 1. Nasi Ayam Geprek  - Rp 15.000" << endl;
-        cout << " 2. Mie Dog-dog       - Rp 15.000" << endl;
-        cout << " 3. Nasi Goreng       - Rp 13.000" << endl;
-        cout << " 4. Magelangan        - Rp 11.000" << endl;
-        cout << " 5. Nasi Omlet        - Rp 10.000" << endl;
-        cout << " 6. Es Teh            - Rp  5.000" << endl;
-        cout << " 7. Es Jeruk          - Rp  5.000" << endl;
-        cout << " 8. Kopi              - Rp  5.000" << endl;
-        cout << " 9. Air Es            - Rp  3.000" << endl;
-        cout << "10. Air Mineral       - Rp  3.000" << endl;
-        cout << "=================================\n" << endl;
-    }
 
-    void pilihMenu() {
-        cout << "Masukan Pilihan Menu (1-10): ";
-        cin >> pilihan;
+        banyakPesanan = 0;
+        total = 0;
+        diskon = 0;
 
-        switch (pilihan) {
-            case 1: menu = "Nasi Ayam Geprek"; harga = 15000; break;
-            case 2: menu = "Mie Dog-dog"; harga = 15000; break;
-            case 3: menu = "Nasi Goreng"; harga = 13000; break;
-            case 4: menu = "Magelangan"; harga = 11000; break;
-            case 5: menu = "Nasi Omlet"; harga = 10000; break;
-            case 6: menu = "Es Teh"; harga = 5000; break;
-            case 7: menu = "Es Jeruk"; harga = 5000; break;
-            case 8: menu = "Kopi"; harga = 5000; break;
-            case 9: menu = "Air Es"; harga = 3000; break;
-            case 10: menu = "Air Mineral"; harga = 3000; break;
-            default:
-                cout << "Pilihan tidak valid!" << endl;
-                exit(1);
-        }
+        char tambah;
 
-        cout << "Menu dipilih : " << menu << " - Rp " << harga << endl;
-    }
-
-    void inputJumlah() {
-        cout << "Masukkan jumlah pesanan: ";
-        cin >> jumlah;
-
-        if (jumlah <= 0) {
-            cout << "Jumlah tidak valid!" << endl;
-            exit(1);
-        }
-    }
-
-    void hitungTotal() {
-        total = harga * jumlah;
-
-        if (total > 105000) {
-            diskon = (total * 30) / 100;
-            total -= diskon;
-            cout << "Anda mendapat diskon 30%!" << endl;
-        }
-
-        cout << "Total tagihan : Rp " << total << endl;
-    }
-
-    void pembayaran() {
         do {
-            cout << "Masukkan jumlah uang bayar: ";
+
+            string keyword;
+
+            cout << "\nCari menu : ";
+            getline(cin, keyword);
+
+            keyword = toLowerCase(keyword);
+
+            int hasil[20];
+            int jumlahHasil = 0;
+
+            cout << "\n===== HASIL PENCARIAN =====\n\n";
+
+            for(int i = 0; i < jumlahMenu; i++) {
+
+                string menuKecil = toLowerCase(daftarMenu[i]);
+
+                if(menuKecil.find(keyword) != string::npos) {
+
+                    hasil[jumlahHasil] = i;
+
+                    cout << jumlahHasil + 1
+                         << ". "
+                         << daftarMenu[i]
+                         << " - Rp "
+                         << daftarHarga[i]
+                         << endl;
+
+                    jumlahHasil++;
+                }
+            }
+
+            if(jumlahHasil == 0) {
+
+                cout << "Menu tidak ditemukan!" << endl;
+                continue;
+            }
+
+            int pilih, qty;
+
+            cout << "\nPilih menu : ";
+            cin >> pilih;
+
+            if(pilih < 1 || pilih > jumlahHasil) {
+
+                cout << "Pilihan tidak valid!" << endl;
+                cin.ignore();
+                continue;
+            }
+
+            cout << "Jumlah pesanan : ";
+            cin >> qty;
+
+            int index = hasil[pilih - 1];
+
+            menuPesanan[banyakPesanan] = daftarMenu[index];
+            hargaPesanan[banyakPesanan] = daftarHarga[index];
+            jumlahPesanan[banyakPesanan] = qty;
+
+            total += daftarHarga[index] * qty;
+            banyakPesanan++;
+
+            cout << "\nTambah pesanan lagi? (Y/T) : ";
+            cin >> tambah;
+            cin.ignore();
+
+        } while(toupper(tambah) == 'Y');
+
+        if(total > 105000) {
+
+            diskon = total * 30 / 100;
+            total -= diskon;
+
+            cout << "\nSelamat! Anda mendapat diskon 30%\n";
+        }
+
+        cout << "\nTotal Bayar : Rp " << total << endl;
+
+        do {
+
+            cout << "Masukkan Uang Bayar : ";
             cin >> bayar;
 
-            if (bayar < total) {
-                cout << "Uang kurang!" << endl;
+            if(bayar < total) {
+                cout << "Uang kurang! Silakan masukkan kembali.\n";
             }
-        } while (bayar < total);
+
+        } while(bayar < total);
 
         kembalian = bayar - total;
+
+        tampilStruk();
     }
 
-    void cetakStruk() {
-        cout << "\n===== STRUK PEMESANAN =====" << endl;
-        cout << "Nama Pelanggan : " << nama << endl;
-        cout << "Menu           : " << menu << endl;
-        cout << "Harga Satuan   : Rp " << harga << endl;
-        cout << "Jumlah         : " << jumlah << endl;
+    void tampilStruk() {
 
-        if (diskon > 0) {
-            cout << "Diskon (30%)   : Rp " << diskon << endl;
+        cout << "\n========================================";
+        cout << "\n          STRUK PEMESANAN";
+        cout << "\n========================================";
+
+        cout << "\nNama Pelanggan : " << nama << endl;
+
+        for(int i = 0; i < banyakPesanan; i++) {
+
+            cout << "\n" << i + 1 << ". "
+                 << menuPesanan[i];
+
+            cout << "\n   "
+                 << jumlahPesanan[i]
+                 << " x Rp "
+                 << hargaPesanan[i]
+                 << " = Rp "
+                 << jumlahPesanan[i] * hargaPesanan[i]
+                 << endl;
         }
 
-        cout << "Total Bayar    : Rp " << total << endl;
-        cout << "Uang Bayar     : Rp " << bayar << endl;
-        cout << "Kembalian      : Rp " << kembalian << endl;
-        cout << "===========================" << endl;
+        cout << "\n----------------------------------------";
+
+        if(diskon > 0) {
+            cout << "\nDiskon 30% : Rp " << diskon;
+        }
+
+        cout << "\nTotal Bayar : Rp " << total;
+        cout << "\nUang Bayar  : Rp " << bayar;
+        cout << "\nKembalian   : Rp " << kembalian;
+
+        cout << "\n========================================\n";
     }
 };
 
 int main() {
-    Kasir k;
 
-    k.inputNama();
-    k.tampilMenu();
-    k.pilihMenu();
-    k.inputJumlah();
-    k.hitungTotal();
-    k.pembayaran();
-    k.cetakStruk();
+    Pemesanan p;
+    int pilihan;
+
+    do {
+
+        cout << "\n===== SISTEM PEMESANAN MAKANAN =====\n";
+        cout << "1. Lihat Menu Termurah - Termahal\n";
+        cout << "2. Pesan Menu\n";
+        cout << "3. Keluar\n";
+        cout << "Pilih Menu : ";
+        cin >> pilihan;
+
+        switch(pilihan) {
+
+            case 1:
+                p.tampilMenuUrut();
+                break;
+
+            case 2:
+                p.pesanMenu();
+                break;
+
+            case 3:
+                cout << "\nTerima kasih telah berkunjung.\n";
+                break;
+
+            default:
+                cout << "\nPilihan tidak tersedia!\n";
+        }
+
+    } while(pilihan != 3);
 
     return 0;
 }
