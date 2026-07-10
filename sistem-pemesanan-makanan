@@ -248,6 +248,19 @@ int main() {
         cout << "Pilih Menu : ";
         cin >> pilihan;
 
+        while(cin.fail()) {
+        	system("cls");  
+    		cout << "Input harus angka! Coba lagi.\n";
+    		cin.clear();
+    		cin.ignore();
+    		
+    		cout << "\n===== SISTEM PEMESANAN MAKANAN =====\n";
+        	cout << "1. Lihat Menu Termurah - Termahal\n";
+        	cout << "2. Pesan Menu\n";
+        	cout << "3. Keluar\n";
+        	cout << "Pilih Menu : ";
+        	cin >> pilihan;
+		}
         switch(pilihan) {
 
             case 1:
